@@ -34,25 +34,26 @@ monthly_income = st.text_input(label="Provide your monthly income")
 
 if st.button('Get Analysis'):
     if (budget_csv_file and monthly_income):
-        remove_existing_files(directory=Data)
-        save_uploaded_file(directory=Data, uploaded_file=budget_csv_file)
+        with st.spinner("🤖 Agent Analyzing your Expenses"):
+            remove_existing_files(directory=Data)
+            save_uploaded_file(directory=Data, uploaded_file=budget_csv_file)
 
-        budget_file = get_files_in_directory(directory=Data)
-        budgetDataFrame = pd.read_csv(budget_file[0])
+            budget_file = get_files_in_directory(directory=Data)
+            budgetDataFrame = pd.read_csv(budget_file[0])
 
-        agent_api_client = AgentAPI(x_api_key=LYZR_API_KEY)
-        chat_body = ChatRequest(
-            user_id=User_ID,
-            agent_id=Agent_ID,
-            message=f"This is the Budget file:{budgetDataFrame} and users montly income:{monthly_income}",
-            session_id=Session_ID
-        )
+            agent_api_client = AgentAPI(x_api_key=LYZR_API_KEY)
+            chat_body = ChatRequest(
+                user_id=User_ID,
+                agent_id=Agent_ID,
+                message=f"This is the Budget file:{budgetDataFrame} and users montly income:{monthly_income}",
+                session_id=Session_ID
+            )
 
-        analysis = agent_api_client.chat_with_agent(json_body=chat_body)
+            analysis = agent_api_client.chat_with_agent(json_body=chat_body)
 
-        if analysis:
-            st.markdown('---')
-            st.write(analysis['response'])
+            if analysis:
+                st.markdown('---')
+                st.write(analysis['response'])
 
     else:
         st.warning('Please provide the Budget file and monthly income')
